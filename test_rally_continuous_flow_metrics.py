@@ -1,33 +1,52 @@
 import pytest
-def test_file1_method1():
-	x=5
-	y=6
-	assert x+1 == y,"test failed"
-	assert x == y,"test failed"
-def test_file1_method2():
-	x=5
-	y=6
-	assert x+1 == y,"test failed"
+from revision_history_parser import RevisionHistoryParser
+from story import Story
 
 
-#import pytest
-#from rally_continuous_flow_metrics import Story, Parser
+class DotDict(dict):
+    """dot.notation access to dictionary attributes"""
+    __getattr__ = dict.get
+    __setattr__ = dict.__setitem__
+    __delattr__ = dict.__delitem__
 
-#class RallyContinuousFlowMetricsTests():
 
- #   def test_current_iteration_if_today_within_start_and_end_date(iteration):
-  #      assert True is True
+def test_when_deployed_state_then_parse_successfully():
+    line = 'FLOW STATE CHANGED DATE changed from [Fri Aug 02 08:36:58 MDT 2019] ' \
+           'to [Mon Aug 05 13:29:00 MDT 2019], FLOW STATE changed from [Ready For Prod] ' \
+           'to [Deployed]'
+    state = 'Deployed'
+    assert RevisionHistoryParser.is_line_for_this_state_change(line, state) is True
 
-    # def test_when_deployed_state_then_parse_successfully(self):
-    #     line = 'FLOW STATE CHANGED DATE changed from [Fri Aug 02 08:36:58 MDT 2019] to [Mon Aug 05 13:29:00 MDT 2019], FLOW STATE changed from [Ready For Prod] to [Deployed]'
-    #     state = 'Deployed'
-    #     self.assertEqual(True, Parser.parse_line_check_state(line, state))
-    #
-    # def test_when_deployed_state_name_has_special_characters_then_parse_successfully(self):
-    #     line = 'FLOW STATE CHANGED DATE changed from [Tue Jul 02 13:51:45 MDT 2019] to [Fri Aug 09 14:31:57 MDT 2019], FLOW STATE changed from [DEPLOYED TO STAGE/PERF] to [DONE [DEPLOYED TO PROD]]'
-    #     state = rally_continuous_flow_metrics.RallyConfiguration().cycle_time_end_state()
-    #     self.assertEqual(True, Parser.parse_line_check_state(line, state))
-    #
-    # def test_cycle_time_reports_work_days(self):
-    #     story = Story()
-    #     self.assertEqual(5, story.get_cycle_time())
+
+def test_when_deployed_state_name_has_special_characters_then_parse_successfully():
+    line = 'FLOW STATE CHANGED DATE changed from [Tue Jul 02 13:51:45 MDT 2019] ' \
+           'to [Fri Aug 09 14:31:57 MDT 2019], FLOW STATE changed from [DEPLOYED TO STAGE/PERF] ' \
+           'to [DONE [DEPLOYED TO PROD]]'
+    state = 'DONE [DEPLOYED TO PROD]'
+    assert RevisionHistoryParser.is_line_for_this_state_change(line, state) is True
+
+
+@pytest.fixture()
+def deployed_story():
+    revision_0 = DotDict({
+        'CreationDate': "2019-07-11T14:33:20.000Z"
+    })
+    revision_1 = DotDict({
+        'CreationDate': "2019-07-11T15:33:20.000Z",
+        'Description': "SCHEDULE STATE changed from [To-Do] to [In-Progress], READY changed from [true] to [false]"
+    })
+    revision_2 = DotDict({
+        'CreationDate': "2019-07-11T16:33:20.000Z",
+        'Description': "SCHEDULE STATE changed from [Ready For Prod] to [Deployed]"
+    })
+    rally_story = DotDict({
+        'ScheduleState': 'Completed',
+        'RevisionHistory': DotDict({
+            'Revisions': [revision_2, revision_1, revision_0]
+        })
+    });
+    return Story(rally_story, ['Backlog', 'To-Do', 'In-Progress', 'Completed', 'Ready For Prod', 'Deployed'])
+
+
+def test_cycle_time_is_in_working_days(deployed_story):
+    assert deployed_story.cycle_time() == 5

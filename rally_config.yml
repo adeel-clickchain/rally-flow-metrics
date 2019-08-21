@@ -1,7 +1,8 @@
 rally:
   uri: rally1.rallydev.com
   apikey: _qy1urW6ySCCCwGTvKjeiYFZbSBl0UQ2g2TQ51KQQEU
-  proxy: proxyvipecc.nb.ford.com:83
+  #proxy: proxyvipecc.nb.ford.com:83
+  proxy:
   project: Consumer Relationship
   workspace: Ford
   board:
@@ -9,5 +10,5 @@ rally:
       startState: IN-PROGRESS
       endState: DONE [DEPLOYED TO PROD]
     story:
-      creationDate: 2019-01-01
+      creationDate: 2019-05-01
 
