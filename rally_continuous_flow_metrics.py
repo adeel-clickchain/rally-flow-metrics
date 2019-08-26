@@ -9,6 +9,7 @@ from story import Story
 from revision_history_parser import RevisionHistoryParser
 
 logging.getLogger().setLevel(logging.INFO)
+rally_configuration = RallyConfiguration()
 
 
 def publish_continuous_flow_metrics():
@@ -20,7 +21,6 @@ def find_deployed_stories():
     existing_flow_states = find_flow_state_names()
     report_start_date = "2019-08-12"
     report_end_date = "2019-08-18"
-    rally_configuration = RallyConfiguration()
     deployed_stories = list()
     fields = "FormattedID, ScheduleState, PlanEstimate, State, " \
              "Name, CreationDate, RevisionHistory, Revisions, FlowState"
@@ -65,7 +65,6 @@ def write_to_csv_file(stories):
 
 def rally_instance():
     os.environ.get('HTTPS_PROXY', None)
-    rally_configuration = RallyConfiguration()
     return Rally(server=rally_configuration.server_uri(),
                  apikey=rally_configuration.api_key(),
                  project=rally_configuration.project_name(),
@@ -80,6 +79,6 @@ class Revisions:
 
 
 if __name__ == "__main__":
-    if RallyConfiguration().proxy() is not None:
+    if rally_configuration.proxy() is not None:
         os.environ['HTTPS_PROXY'] = "proxyvipecc.nb.ford.com:83"
     publish_continuous_flow_metrics()

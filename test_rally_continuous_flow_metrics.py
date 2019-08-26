@@ -1,6 +1,7 @@
 import pytest
 from revision_history_parser import RevisionHistoryParser
 from story import Story
+import pendulum
 
 
 class DotDict(dict):
@@ -27,16 +28,16 @@ def test_when_deployed_state_name_has_special_characters_then_parse_successfully
 
 
 @pytest.fixture()
-def deployed_story():
+def deployed_story_over_the_weekend():
     revision_0 = DotDict({
         'CreationDate': "2019-07-11T14:33:20.000Z"
     })
     revision_1 = DotDict({
-        'CreationDate': "2019-07-11T15:33:20.000Z",
+        'CreationDate': "2019-07-31T15:33:20.000Z",
         'Description': "SCHEDULE STATE changed from [To-Do] to [In-Progress], READY changed from [true] to [false]"
     })
     revision_2 = DotDict({
-        'CreationDate': "2019-07-11T16:33:20.000Z",
+        'CreationDate': "2019-08-06T16:33:20.000Z",
         'Description': "SCHEDULE STATE changed from [Ready For Prod] to [Deployed]"
     })
     rally_story = DotDict({
@@ -48,5 +49,5 @@ def deployed_story():
     return Story(rally_story, ['Backlog', 'To-Do', 'In-Progress', 'Completed', 'Ready For Prod', 'Deployed'])
 
 
-def test_cycle_time_is_in_working_days(deployed_story):
-    assert deployed_story.cycle_time() == 5
+def test_cycle_time_only_includes_business_days(deployed_story_over_the_weekend):
+    assert deployed_story_over_the_weekend.cycle_time == 4

@@ -7,8 +7,8 @@ rally:
   workspace: Ford
   board:
     cycleTime:
-      startState: IN-PROGRESS
-      endState: DONE [DEPLOYED TO PROD]
+      startState: In-Progress
+      endState: Deployed
     story:
       creationDate: 2019-05-01
 
