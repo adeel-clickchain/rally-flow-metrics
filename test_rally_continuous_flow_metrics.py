@@ -50,4 +50,4 @@ def deployed_story_over_the_weekend():
 
 
 def test_cycle_time_only_includes_business_days(deployed_story_over_the_weekend):
-    assert deployed_story_over_the_weekend.cycle_time == 4
+    assert deployed_story_over_the_weekend.cycle_time == 6

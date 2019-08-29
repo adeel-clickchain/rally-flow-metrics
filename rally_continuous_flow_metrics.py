@@ -19,8 +19,8 @@ def publish_continuous_flow_metrics():
 
 def find_deployed_stories():
     existing_flow_states = find_flow_state_names()
-    report_start_date = "2019-08-12"
-    report_end_date = "2019-08-18"
+    report_start_date = "2019-08-19"
+    report_end_date = "2019-08-25"
     deployed_stories = list()
     fields = "FormattedID, ScheduleState, PlanEstimate, State, " \
              "Name, CreationDate, RevisionHistory, Revisions, FlowState"

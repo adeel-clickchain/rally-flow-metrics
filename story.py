@@ -1,8 +1,9 @@
 import pendulum
 from revision_history_parser import RevisionHistoryParser
 from rally_configuration import RallyConfiguration
+import logging
 
-
+logging.getLogger().setLevel(logging.INFO)
 rally_configuration = RallyConfiguration()
 
 
@@ -32,5 +33,8 @@ class Story:
             start_date = pendulum.parse(
                 self.flow_state_changes.get(start_state))
             end_date = pendulum.parse(self.flow_state_changes.get(end_state))
-            period = pendulum.period(start_date, end_date).range()
-        return period.in_days()
+            logging.info('start date: ' + start_date.to_date_string())
+            logging.info('end date: ' + end_date.to_date_string())
+            period = pendulum.period(start_date, end_date)
+            logging.info('period: ' + period.in_days().__str__())
+            return period.in_days()
