@@ -1,7 +1,9 @@
+from functools import reduce
+
 import pytest
 from revision_history_parser import RevisionHistoryParser
 from story import Story
-import pendulum
+from statistics import mean
 
 
 class DotDict(dict):
@@ -49,5 +51,18 @@ def deployed_story_over_the_weekend():
     return Story(rally_story, ['Backlog', 'To-Do', 'In-Progress', 'Completed', 'Ready For Prod', 'Deployed'])
 
 
-def test_cycle_time_only_includes_business_days(deployed_story_over_the_weekend):
-    assert deployed_story_over_the_weekend.cycle_time == 6
+##def test_cycle_time_only_includes_business_days(deployed_story_over_the_weekend):
+##assert deployed_story_over_the_weekend.cycle_time == 6
+
+
+@pytest.fixture()
+def stories_with_cycle_time():
+    story1 = DotDict({'cycle_time': '4'})
+    story2 = DotDict({'cycle_time': '7'})
+    story3 = DotDict({'cycle_time': '8'})
+    story4 = DotDict({'cycle_time': '9'})
+    return [story1, story2, story3, story4]
+
+
+def test_mean_cycle_time():
+    assert mean([1, 2, 3, 4]) == 4
