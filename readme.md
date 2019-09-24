@@ -1,8 +1,6 @@
-Clone the repo at: 
-https://github.com/adeel-clickchain/rally-flow-metrics.git
+Clone the repo at: https://github.com/adeel-clickchain/rally-flow-metrics.git
 
-Please visit the following website to download python 3.6.3 version:
-[[https://www.python.org/downloads/]]
+Please visit the following website to download python 3.6.3 version: https://www.python.org/downloads/
 
 Commands for creating virtual environment after installing python on the system are:
 ~~~ bash
