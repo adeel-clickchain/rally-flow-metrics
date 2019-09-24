@@ -14,8 +14,8 @@ rally_configuration = RallyConfiguration()
 
 
 def publish_continuous_flow_metrics():
-    report_start_date = "2019-09-02"
-    report_end_date = "2019-09-08"
+    report_start_date = "2019-09-16"
+    report_end_date = "2019-09-22"
     existing_flow_states = find_flow_state_names()
     stories = find_stories_in_rally(report_start_date, report_end_date, existing_flow_states)
     write_to_csv_file(report_start_date, report_end_date, stories, existing_flow_states)
@@ -73,7 +73,6 @@ def write_to_csv_file(report_start_date, report_end_date, stories, flow_states):
         output.writerow(['Report End Date', report_end_date])
         output.writerow(['Throughput', summary.throughput])
         output.writerow(['Mean Cycle Time', summary.mean_cycle_time])
-        output.writerow(['Story WIP', summary.wip])
 
 
 def create_data_row(story, flow_states):
@@ -111,7 +110,6 @@ class Summary:
     def __init__(self, stories):
         self.mean_cycle_time = self.get_mean_cycle_time(stories)
         self.throughput = self.get_through_put(stories)
-        self.wip = self.get_wip(stories)
 
     def get_mean_cycle_time(self, stories):
         cycle_times = list()
@@ -126,11 +124,6 @@ class Summary:
             if story.cycle_time is not None:
                 throughput = throughput + 1
         return throughput
-
-    def get_wip(self, stories):
-        if stories is None:
-            return 0
-        return len(stories) - 1
 
 
 if __name__ == "__main__":

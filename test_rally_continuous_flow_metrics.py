@@ -52,7 +52,7 @@ def deployed_story_over_the_weekend():
 
 
 ##def test_cycle_time_only_includes_business_days(deployed_story_over_the_weekend):
-##assert deployed_story_over_the_weekend.cycle_time == 6
+  ##  assert deployed_story_over_the_weekend.cycle_time == 6
 
 
 @pytest.fixture()
@@ -65,4 +65,4 @@ def stories_with_cycle_time():
 
 
 def test_mean_cycle_time():
-    assert mean([1, 2, 3, 4]) == 4
+    assert mean([1, 2, 3, 4]) == 2.5
