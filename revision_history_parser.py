@@ -1,6 +1,5 @@
 import re
 
-
 class RevisionHistoryParser:
 
     @staticmethod

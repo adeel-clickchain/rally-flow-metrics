@@ -4,6 +4,7 @@ import logging
 import os
 from pyral import Rally
 from statistics import mean
+import argparse
 
 from rally_configuration import RallyConfiguration
 from story import Story
@@ -13,9 +14,7 @@ logging.getLogger().setLevel(logging.INFO)
 rally_configuration = RallyConfiguration()
 
 
-def publish_continuous_flow_metrics():
-    report_start_date = "2019-09-23"
-    report_end_date = "2019-09-29"
+def publish_continuous_flow_metrics(report_start_date, report_end_date):
     existing_flow_states = find_flow_state_names()
     stories = find_stories_in_rally(report_start_date, report_end_date, existing_flow_states)
     write_to_csv_file(report_start_date, report_end_date, stories, existing_flow_states)
@@ -133,7 +132,22 @@ class Summary:
         return throughput
 
 
-if __name__ == "__main__":
+def configure_arguments():
+    global args
+    # initiate the parser
+    parser = argparse.ArgumentParser()
+    # add long and short argument
+    parser.add_argument("--report_start_date", "-s", help="The start date of the report")
+    parser.add_argument("--report_end_date", "-e", help="The end date of the report")
+    args = parser.parse_args()
+
+
+def configure_proxy():
     if rally_configuration.proxy() is not None:
         os.environ['HTTPS_PROXY'] = "proxyvipecc.nb.ford.com:83"
-    publish_continuous_flow_metrics()
+
+
+if __name__ == "__main__":
+    configure_proxy()
+    configure_arguments()
+    publish_continuous_flow_metrics(args.report_start_date, args.report_end_date)
