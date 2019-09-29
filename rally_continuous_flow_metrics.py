@@ -14,8 +14,8 @@ rally_configuration = RallyConfiguration()
 
 
 def publish_continuous_flow_metrics():
-    report_start_date = "2019-09-16"
-    report_end_date = "2019-09-22"
+    report_start_date = "2019-09-23"
+    report_end_date = "2019-09-29"
     existing_flow_states = find_flow_state_names()
     stories = find_stories_in_rally(report_start_date, report_end_date, existing_flow_states)
     write_to_csv_file(report_start_date, report_end_date, stories, existing_flow_states)
@@ -60,6 +60,7 @@ def story_is_in_progress(rally_story, report_end_date):
 
 
 def write_to_csv_file(report_start_date, report_end_date, stories, flow_states):
+    create_reports_folder_if_it_doesnt_exist()
     with open("reports/" + RallyConfiguration().project_name().replace(" ", "_").lower() + "_rally_metrics.csv", 'w',
               newline='') as csv_file:
         output = csv.writer(csv_file)
@@ -73,6 +74,12 @@ def write_to_csv_file(report_start_date, report_end_date, stories, flow_states):
         output.writerow(['Report End Date', report_end_date])
         output.writerow(['Throughput', summary.throughput])
         output.writerow(['Mean Cycle Time', summary.mean_cycle_time])
+
+
+def create_reports_folder_if_it_doesnt_exist():
+    directory = "reports"
+    if not os.path.exists(directory):
+        os.makedirs(directory)
 
 
 def create_data_row(story, flow_states):
