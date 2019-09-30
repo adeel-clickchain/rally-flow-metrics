@@ -49,4 +49,4 @@ e.g. py rally_continuous_flow_metrics.py -t navigation -s 2019-09-16 -e 2019-09-
      py rally_continuous_flow_metrics.py -t assist -s 2019-09-23 -e 2019-09-29
 ~~~
 
-The report will be generated under the "reports" folder with the name [team name]_[start date]_[end_date]_metrics.csv e.g. assist_2019-09-23_2019-09-29_metrics.csv
+The report will be generated under the "reports" folder with the name "[team name]\_[start date]\_[end date]\_metrics.csv" e.g. assist_2019-09-23_2019-09-29_metrics.csv
