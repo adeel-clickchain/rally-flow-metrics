@@ -1,0 +1,12 @@
+rally:
+  uri: [URL for Rally]
+  apikey: [API key received from Rally, see https://docs.ca.com/en-us/ca-agile-central/saas/rally-application-manager]
+  proxy: [Proxy URI if necessary, otherwise keep blank]
+  project: [Name of the project in Rally]
+  workspace: [Name of the workspace in Rally]
+  board:
+    cycleTime:
+      startState: [Name of the cycle time start flow state in rally team board]
+      endState: [Name of the cycle time end flow state in rally team board]
+    story:
+      creationDate: [Provide the earliest creation date for stories in rally in YYYY-MM-DD format]

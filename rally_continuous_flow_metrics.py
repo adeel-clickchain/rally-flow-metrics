@@ -11,7 +11,6 @@ from story import Story
 from revision_history_parser import RevisionHistoryParser
 
 logging.getLogger().setLevel(logging.INFO)
-rally_configuration = RallyConfiguration()
 
 
 def publish_continuous_flow_metrics(report_start_date, report_end_date):
@@ -30,7 +29,8 @@ def find_stories_in_rally(report_start_date, report_end_date, existing_flow_stat
     for rally_story in rally_stories:
         if (story_deployed_recently(rally_story, report_start_date, report_end_date)
                 or story_is_in_progress(rally_story, report_end_date)):
-            stories.append(Story(rally_story, existing_flow_states))
+            stories.append(Story(rally_story, existing_flow_states, rally_configuration.cycle_time_start_state(),
+                                 rally_configuration.cycle_time_end_state()))
     return stories
 
 
@@ -46,7 +46,7 @@ def find_flow_state_names():
 def story_deployed_recently(story, report_start_date, report_end_date):
     for revision in story.RevisionHistory.Revisions:
         if RevisionHistoryParser.is_line_for_this_state_change(revision.Description,
-                                                               RallyConfiguration().cycle_time_end_state()):
+                                                               rally_configuration.cycle_time_end_state()):
             if pendulum.parse(report_start_date) <= pendulum.parse(revision.CreationDate) <= pendulum.parse(
                     report_end_date):
                 return True
@@ -60,8 +60,7 @@ def story_is_in_progress(rally_story, report_end_date):
 
 def write_to_csv_file(report_start_date, report_end_date, stories, flow_states):
     create_reports_folder_if_it_doesnt_exist()
-    with open("reports/" + RallyConfiguration().project_name().replace(" ", "_").lower() + "_rally_metrics.csv", 'w',
-              newline='') as csv_file:
+    with open(build_report_file_name(), 'w', newline='') as csv_file:
         output = csv.writer(csv_file)
         output.writerow(create_header_row(flow_states))
         for story in stories:
@@ -73,6 +72,10 @@ def write_to_csv_file(report_start_date, report_end_date, stories, flow_states):
         output.writerow(['Report End Date', report_end_date])
         output.writerow(['Throughput', summary.throughput])
         output.writerow(['Mean Cycle Time', summary.mean_cycle_time])
+
+
+def build_report_file_name():
+    return "reports/" + args.team_name + "_" + args.report_start_date + "_" + args.report_end_date + "_metrics.csv"
 
 
 def create_reports_folder_if_it_doesnt_exist():
@@ -122,6 +125,8 @@ class Summary:
         for story in stories:
             if story.cycle_time is not None:
                 cycle_times.append(story.cycle_time)
+        if not cycle_times:
+            return 0
         return mean(cycle_times)
 
     def get_through_put(self, stories):
@@ -137,6 +142,7 @@ def configure_arguments():
     # initiate the parser
     parser = argparse.ArgumentParser()
     # add long and short argument
+    parser.add_argument("--team_name", "-t", help="The name of the team")
     parser.add_argument("--report_start_date", "-s", help="The start date of the report")
     parser.add_argument("--report_end_date", "-e", help="The end date of the report")
     args = parser.parse_args()
@@ -147,7 +153,13 @@ def configure_proxy():
         os.environ['HTTPS_PROXY'] = "proxyvipecc.nb.ford.com:83"
 
 
+def configure_rally():
+    global rally_configuration
+    rally_configuration = RallyConfiguration(args.team_name)
+
+
 if __name__ == "__main__":
-    configure_proxy()
     configure_arguments()
+    configure_rally()
+    configure_proxy()
     publish_continuous_flow_metrics(args.report_start_date, args.report_end_date)

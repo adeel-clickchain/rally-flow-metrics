@@ -4,8 +4,9 @@ import yaml
 class RallyConfiguration:
     rally_configuration = None
 
-    def __init__(self):
-        with open("rally_config.yml", 'r') as stream:
+    def __init__(self, team_name):
+        config_file_name = team_name.lower() + "_rally_config.yml"
+        with open("config/" + config_file_name, 'r') as stream:
             try:
                 self.rally_configuration = yaml.safe_load(stream)["rally"]
             except yaml.YAMLError as exc:
