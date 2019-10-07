@@ -143,14 +143,14 @@ def configure_arguments():
     parser = argparse.ArgumentParser()
     # add long and short argument
     parser.add_argument("--team_name", "-t", help="The name of the team")
-    parser.add_argument("--report_start_date", "-s", help="The start date of the report")
-    parser.add_argument("--report_end_date", "-e", help="The end date of the report")
+    parser.add_argument("--report_start_date", "-s", help="The start date of the report in YYYY-MM-DD format")
+    parser.add_argument("--report_end_date", "-e", help="The end date of the report in YYYY-MM-DD format")
     args = parser.parse_args()
 
 
 def configure_proxy():
     if rally_configuration.proxy() is not None:
-        os.environ['HTTPS_PROXY'] = "proxyvipecc.nb.ford.com:83"
+        os.environ['HTTPS_PROXY'] = rally_configuration.proxy()
 
 
 def configure_rally():

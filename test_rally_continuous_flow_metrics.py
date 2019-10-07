@@ -48,11 +48,11 @@ def deployed_story_over_the_weekend():
             'Revisions': [revision_2, revision_1, revision_0]
         })
     });
-    return Story(rally_story, ['Backlog', 'To-Do', 'In-Progress', 'Completed', 'Ready For Prod', 'Deployed'])
+    return Story(rally_story, ['Backlog', 'To-Do', 'In-Progress', 'Completed', 'Ready For Prod', 'Deployed'], 'In-Progress', 'Deployed')
 
 
-##def test_cycle_time_only_includes_business_days(deployed_story_over_the_weekend):
-  ##  assert deployed_story_over_the_weekend.cycle_time == 6
+def test_cycle_time_only_includes_business_days(deployed_story_over_the_weekend):
+    assert deployed_story_over_the_weekend.cycle_time == 7
 
 
 @pytest.fixture()
