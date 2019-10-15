@@ -29,8 +29,8 @@ def find_stories_in_rally(report_start_date, report_end_date, existing_flow_stat
     for rally_story in rally_stories:
         if (story_deployed_recently(rally_story, report_start_date, report_end_date)
                 or story_is_in_progress(rally_story, report_end_date)):
-            stories.append(Story(rally_story, existing_flow_states, rally_configuration.cycle_time_start_state(),
-                                 rally_configuration.cycle_time_end_state()))
+            stories.append(Story(rally_story, existing_flow_states, rally_configuration.cycle_time_start_states(),
+                                 rally_configuration.cycle_time_end_states()))
     return stories
 
 
@@ -45,8 +45,8 @@ def find_flow_state_names():
 
 def story_deployed_recently(story, report_start_date, report_end_date):
     for revision in story.RevisionHistory.Revisions:
-        if RevisionHistoryParser.is_line_for_this_state_change(revision.Description,
-                                                               rally_configuration.cycle_time_end_state()):
+        if RevisionHistoryParser.is_revision_for_state_change(revision.Description,
+                                                              rally_configuration.cycle_time_end_states()):
             if pendulum.parse(report_start_date) <= pendulum.parse(revision.CreationDate) <= pendulum.parse(
                     report_end_date):
                 return True

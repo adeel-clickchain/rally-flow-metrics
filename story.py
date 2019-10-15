@@ -18,7 +18,7 @@ class Story:
         flow_state_changes = {}
         for item in flow_states:
             for revision in rally_revisions:
-                if RevisionHistoryParser.is_line_for_this_state_change(revision.Description, item):
+                if RevisionHistoryParser.is_revision_for_state_change(revision.Description, {item}):
                     flow_state_changes[item] = revision.CreationDate
         return flow_state_changes
 

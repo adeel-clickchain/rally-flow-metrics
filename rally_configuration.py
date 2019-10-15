@@ -1,4 +1,5 @@
 import yaml
+import re
 
 
 class RallyConfiguration:
@@ -24,14 +25,25 @@ class RallyConfiguration:
     def work_space(self):
         return self.rally_configuration["workspace"]
 
-    def cycle_time_start_state(self):
-        return self.rally_configuration["board"]["cycleTime"]["startState"]
+    def cycle_time_start_states(self):
+        return self.prepare_flow_state_list(self.rally_configuration["board"]["cycleTime"]["startState"])
 
-    def cycle_time_end_state(self):
-        return self.rally_configuration["board"]["cycleTime"]["endState"]
+    def cycle_time_end_states(self):
+        return self.prepare_flow_state_list(self.rally_configuration["board"]["cycleTime"]["endState"])
 
     def story_creation_start_date(self):
         return self.rally_configuration["board"]["story"]["creationDate"]
 
     def proxy(self):
         return self.rally_configuration["proxy"]
+
+    @staticmethod
+    def prepare_flow_state_list(states):
+        if states.index(',') > -1:
+            return map(str.strip, states.split(','))
+        else:
+            return {states}
+
+    @staticmethod
+    def strip_whitespaces(self, x):
+        return x.strip()

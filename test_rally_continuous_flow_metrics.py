@@ -3,14 +3,7 @@ from functools import reduce
 import pytest
 from revision_history_parser import RevisionHistoryParser
 from story import Story
-from statistics import mean
-
-
-class DotDict(dict):
-    """dot.notation access to dictionary attributes"""
-    __getattr__ = dict.get
-    __setattr__ = dict.__setitem__
-    __delattr__ = dict.__delitem__
+from rally_configuration import RallyConfiguration
 
 
 def test_when_deployed_state_then_parse_successfully():
@@ -18,7 +11,7 @@ def test_when_deployed_state_then_parse_successfully():
            'to [Mon Aug 05 13:29:00 MDT 2019], FLOW STATE changed from [Ready For Prod] ' \
            'to [Deployed]'
     state = 'Deployed'
-    assert RevisionHistoryParser.is_line_for_this_state_change(line, state) is True
+    assert RevisionHistoryParser.is_revision_for_state_change(line, {state}) is True
 
 
 def test_when_deployed_state_name_has_special_characters_then_parse_successfully():
@@ -26,7 +19,25 @@ def test_when_deployed_state_name_has_special_characters_then_parse_successfully
            'to [Fri Aug 09 14:31:57 MDT 2019], FLOW STATE changed from [DEPLOYED TO STAGE/PERF] ' \
            'to [DONE [DEPLOYED TO PROD]]'
     state = 'DONE [DEPLOYED TO PROD]'
-    assert RevisionHistoryParser.is_line_for_this_state_change(line, state) is True
+    assert RevisionHistoryParser.is_revision_for_state_change(line, {state}) is True
+
+
+def test_when_state_name_changes_revision_is_identified():
+    line = 'FLOW STATE CHANGED DATE changed from [Tue Jul 02 13:51:45 MDT 2019] ' \
+           'to [Fri Aug 09 14:31:57 MDT 2019], FLOW STATE changed from [DEPLOYED TO STAGE/PERF] ' \
+           'to [DONE [DEPLOYED TO PROD]]'
+    state = {'DONE [DEPLOYED TO PROD]', 'COMPLETED'}
+    assert RevisionHistoryParser.is_revision_for_state_change(line, state) is True
+
+
+def test_rally_configuration_can_provide_multiple_start_states():
+    rally_configuration = RallyConfiguration("navigation")
+    assert sorted(rally_configuration.cycle_time_start_states()) == sorted({'IN PROGRESS', 'DEFINED'})
+
+
+def test_rally_configuration_can_provide_multiple_end_states():
+    rally_configuration = RallyConfiguration("navigation")
+    assert sorted(rally_configuration.cycle_time_end_states()) == sorted({'ALMOST DONE', 'DONE'})
 
 
 @pytest.fixture()
@@ -48,21 +59,16 @@ def deployed_story_over_the_weekend():
             'Revisions': [revision_2, revision_1, revision_0]
         })
     });
-    return Story(rally_story, ['Backlog', 'To-Do', 'In-Progress', 'Completed', 'Ready For Prod', 'Deployed'], 'In-Progress', 'Deployed')
+    return Story(rally_story, ['Backlog', 'To-Do', 'In-Progress', 'Completed', 'Ready For Prod', 'Deployed'],
+                 'In-Progress', 'Deployed')
 
 
 def test_cycle_time_only_includes_business_days(deployed_story_over_the_weekend):
     assert deployed_story_over_the_weekend.cycle_time == 7
 
 
-@pytest.fixture()
-def stories_with_cycle_time():
-    story1 = DotDict({'cycle_time': '4'})
-    story2 = DotDict({'cycle_time': '7'})
-    story3 = DotDict({'cycle_time': '8'})
-    story4 = DotDict({'cycle_time': '9'})
-    return [story1, story2, story3, story4]
-
-
-def test_mean_cycle_time():
-    assert mean([1, 2, 3, 4]) == 2.5
+class DotDict(dict):
+    """dot.notation access to dictionary attributes"""
+    __getattr__ = dict.get
+    __setattr__ = dict.__setitem__
+    __delattr__ = dict.__delitem__
