@@ -5,10 +5,11 @@ import os
 from pyral import Rally
 from statistics import mean
 import argparse
+import json
 
-from rally_configuration import RallyConfiguration
-from story import Story
-from revision_history_parser import RevisionHistoryParser
+from domain.rally_configuration import RallyConfiguration
+from domain.story import Story
+from domain.revision_history_parser import RevisionHistoryParser
 
 logging.getLogger().setLevel(logging.INFO)
 
@@ -25,6 +26,9 @@ def find_stories_in_rally(report_start_date, report_end_date, existing_flow_stat
              "Name, CreationDate, RevisionHistory, Revisions, FlowState"
     query = "CreationDate >= " + rally_configuration.story_creation_start_date().__str__()
     rally_stories = rally_instance().get('UserStory', fields=fields, query=query, instance=True)
+    y = json.dumps(rally_stories.content)
+
+    print(y)
 
     for rally_story in rally_stories:
         if (story_deployed_recently(rally_story, report_start_date, report_end_date)

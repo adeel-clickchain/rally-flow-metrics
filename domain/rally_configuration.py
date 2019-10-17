@@ -1,5 +1,5 @@
 import yaml
-import re
+import os
 
 
 class RallyConfiguration:
@@ -39,7 +39,7 @@ class RallyConfiguration:
 
     @staticmethod
     def prepare_flow_state_list(states):
-        if states.index(',') > -1:
+        if ',' in states:
             return map(str.strip, states.split(','))
         else:
             return {states}

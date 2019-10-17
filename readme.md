@@ -12,9 +12,13 @@ To create a virtual environment, you must specify a path. For example to create 
 virtualenv mypython
 ~~~
 
-You can activate the python environment by running the following command:  
+You can activate the python environment by running the following command on a Mac:
 ~~~ bash
 source mypython/bin/activate
+~~~
+If you are using a Windows machine instead, use the following command:
+~~~ bash
+mypython\Scripts\Activate.bat
 ~~~
 
 Run the following command to install the project related modules and libraries:
@@ -43,10 +47,10 @@ rally:
 Run the python script named rally_continuous_flow_metrics passing in the team name, report start and end date as arguments. Please note that the team name should correspond with the name used to create the configuration file. Here are a few examples:
 
 ~~~ bash
-py rally_continuous_flow_metrics.py -t [Team Name] -s [Report Start Date YYYY-MM-DD] -e [Report End Date YYYY-MM-DD]
+py run_metrics_report.py -t [Team Name] -s [Report Start Date YYYY-MM-DD] -e [Report End Date YYYY-MM-DD]
 
-e.g. py rally_continuous_flow_metrics.py -t navigation -s 2019-09-16 -e 2019-09-22
-     py rally_continuous_flow_metrics.py -t assist -s 2019-09-23 -e 2019-09-29
+e.g. py run_metrics_report.py -t navigation -s 2019-09-16 -e 2019-09-22
+     py run_metrics_report.py -t assist -s 2019-09-23 -e 2019-09-29
 ~~~
 
 The report will be generated under the "reports" folder with the name "[team name]\_[start date]\_[end date]\_metrics.csv" e.g. assist_2019-09-23_2019-09-29_metrics.csv

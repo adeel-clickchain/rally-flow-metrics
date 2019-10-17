@@ -1,18 +1,17 @@
 import pendulum
-from revision_history_parser import RevisionHistoryParser
-import logging
+from domain.revision_history_parser import RevisionHistoryParser
 
-logging.getLogger().setLevel(logging.INFO)
 
 class Story:
 
-    def __init__(self, rally_story, flow_states, cycle_time_start_state, cycle_time_end_state):
+    def __init__(self, rally_story, flow_states, configured_start_states, configured_end_states):
         self.name = rally_story.Name
         self.id = rally_story.FormattedID
         self.schedule_state = rally_story.ScheduleState
         self.points = rally_story.PlanEstimate
         self.flow_state_changes = self.get_flow_state_changes(rally_story.RevisionHistory.Revisions, flow_states)
-        self.cycle_time = self.cycle_time(cycle_time_start_state, cycle_time_end_state)
+        self.cycle_time = self.cycle_time(Story.find_current_state_name(flow_states, configured_start_states)
+                                          , Story.find_current_state_name(flow_states, configured_end_states))
 
     def get_flow_state_changes(self, rally_revisions, flow_states):
         flow_state_changes = {}
@@ -30,3 +29,10 @@ class Story:
             end_date = pendulum.parse(self.flow_state_changes.get(end_state))
             period = pendulum.period(start_date, end_date)
             return period.in_days() + 1
+
+    @staticmethod
+    def find_current_state_name(flow_state_names, configured_state_names):
+        for state in configured_state_names:
+            if state in flow_state_names:
+                return state
+
